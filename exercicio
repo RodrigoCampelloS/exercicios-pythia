@@ -1,0 +1,43 @@
+#include <iostream>
+#include <string>
+#include <iomanip>
+#include <sstream>
+#include <fstream>
+#include <stdio.h>
+#include <string.h>
+
+void exercicio(){
+fstream file;
+file.open("myfile.txt",ios::in);
+double num[14157][6]; //criando o array que será preenchido a lista que foi gerada pelo pythia
+double massas[14157]; //criando o array que será preenchido com as massas reconstruidas a partir do TLorentzVector
+double Muon_pdg_mass = 0.1056583755; //massa do muon
+TLorentzVector mu_1;
+TLorentzVector mu_2;
+TLorentzVector jpsi;
+TH1F *h1 = new TH1F("h1", "massa J/Psi", 50, 0, 4);
+if ( file.is_open() ) {
+	ifstream take("myfile.txt");
+	
+	for(int i = 0; i < 14157; ++i)
+        {
+        	for( int k=0; k<6;k++){
+			file >> num[i][k];
+			
+        	}
+        }
+	for(int j = 0; j<14157;j++){
+	mu_1.SetPtEtaPhiM(num[j][0], num[j][1], num[j][2], Muon_pdg_mass);
+	mu_2.SetPtEtaPhiM(num[j][3], num[j][4], num[j][5], Muon_pdg_mass);
+	jpsi = mu_1+mu_2;
+	massas[j]=jpsi.M();
+	h1->Fill(massas[j]);
+	h1->GetXaxis()->SetTitle("Gev/c^2");
+	h1->GetYaxis()->SetTitle("events");
+	h1->Draw();
+	}
+}else{
+}
+file.close();
+}
+
